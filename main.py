@@ -1,34 +1,34 @@
 import pygame, pytmx
 
-#Background color
+#Цвет Background
 BACKGROUND = (20, 20, 20)
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
 
-#Tiled map layer of tiles that you collide with
+#Плиточный слой карты с плитками, с которыми вы сталкиваетесь
 MAP_COLLISION_LAYER = 1
 
 class Game(object):
     def __init__(self):
-        #Set up a level to load
+        #Установите уровень для загрузки
         self.currentLevelNumber = 0
         self.levels = []
         self.levels.append(Level(fileName = "resources/level1.tmx"))
         self.currentLevel = self.levels[self.currentLevelNumber]
-        
-        #Create a player object and set the level it is in
+
+        #Создайте объект игрока и установите уровень, в котором он находится
         self.player = Player(x = 200, y = 100)
         self.player.currentLevel = self.currentLevel
-        
+
         #Draw aesthetic overlay
         self.overlay = pygame.image.load("resources/overlay.png")
-        
+
     def processEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
-            #Get keyboard input and move player accordingly
+            #Получить ввод с клавиатуры для перемещения игрока
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     self.player.goLeft()
@@ -41,32 +41,32 @@ class Game(object):
                     self.player.stop()
                 elif event.key == pygame.K_RIGHT and self.player.changeX > 0:
                     self.player.stop()
-            
+
         return False
-        
+
     def runLogic(self):
-        #Update player movement and collision logic
+        #Обновить логику движения и столкновения игрока
         self.player.update()
-    
-    #Draw level, player, overlay
+
+    #Отрисовка уровня,игрока и наложения
     def draw(self, screen):
         screen.fill(BACKGROUND)
         self.currentLevel.draw(screen)
         self.player.draw(screen)
         screen.blit(self.overlay, [0, 0])
         pygame.display.flip()
-        
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        
-        #Load the spritesheet of frames for this player
+
+        #Загрузка таблицы с кадрами анимации  для этого игрока
         self.sprites = SpriteSheet("resources/player.png")
-    
+
         self.stillRight = self.sprites.image_at((0, 0, 30, 42))
         self.stillLeft = self.sprites.image_at((0, 42, 30, 42))
-        
-        #List of frames for each animation
+
+        #Список кадров для каждой анимации
         self.runningRight = (self.sprites.image_at((0, 84, 30, 42)),
                     self.sprites.image_at((30, 84, 30, 42)),
                     self.sprites.image_at((60, 84, 30, 42)),
@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite):
                     self.sprites.image_at((60, 126, 30, 42)),
                     self.sprites.image_at((90, 126, 30, 42)),
                     self.sprites.image_at((120, 126, 30, 42)))
-                    
+
         self.jumpingRight = (self.sprites.image_at((30, 0, 30, 42)),
                     self.sprites.image_at((60, 0, 30, 42)),
                     self.sprites.image_at((90, 0, 30, 42)))
@@ -86,67 +86,67 @@ class Player(pygame.sprite.Sprite):
         self.jumpingLeft = (self.sprites.image_at((30, 42, 30, 42)),
                     self.sprites.image_at((60, 42, 30, 42)),
                     self.sprites.image_at((90, 42, 30, 42)))
-        
+
         self.image = self.stillRight
-        
-        #Set player position
+
+        #Установить положение игрока
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
-        #Set speed and direction
+
+        #Установите скорость и направление
         self.changeX = 0
         self.changeY = 0
         self.direction = "right"
-        
-        #Boolean to check if player is running, current running frame, and time since last frame change
+
+        #Логическое значение, чтобы проверить, бежит ли игрок, текущий выполняемый кадр и время с момента последнего изменения кадра
         self.running = False
         self.runningFrame = 0
         self.runningTime = pygame.time.get_ticks()
-        
-        #Players current level, set after object initialized in game constructor
+
+        #Текущий уровень игроков, установленный после инициализации объекта в конструкторе игры
         self.currentLevel = None
-        
+
     def update(self):
-        #Update player position by change
+        #Обновить позицию игрока путем изменения
         self.rect.x += self.changeX
-        
-        #Get tiles in collision layer that player is now touching
+
+        #Получите плитки в слое столкновений, которых теперь касается игрок
         tileHitList = pygame.sprite.spritecollide(self, self.currentLevel.layers[MAP_COLLISION_LAYER].tiles, False)
-        
-        #Move player to correct side of that block
+
+        #Переместить игрока на правильную сторону этого блока
         for tile in tileHitList:
             if self.changeX > 0:
                 self.rect.right = tile.rect.left
             else:
                 self.rect.left = tile.rect.right
-        
-        #Move screen if player reaches screen bounds
+
+        #Переместить экран, если игрок достигает границ экрана
         if self.rect.right >= SCREEN_WIDTH - 200:
             difference = self.rect.right - (SCREEN_WIDTH - 200)
             self.rect.right = SCREEN_WIDTH - 200
             self.currentLevel.shiftLevel(-difference)
-        
-        #Move screen is player reaches screen bounds
+
+        #Переместить экран когда игрок достигает границ экрана
         if self.rect.left <= 200:
             difference = 200 - self.rect.left
             self.rect.left = 200
             self.currentLevel.shiftLevel(difference)
-        
-        #Update player position by change
+
+        #Обновить позицию игрока путем изменения
         self.rect.y += self.changeY
-        
-        #Get tiles in collision layer that player is now touching
+
+        #Получите плитки в слое столкновений, которых теперь касается игрок
         tileHitList = pygame.sprite.spritecollide(self, self.currentLevel.layers[MAP_COLLISION_LAYER].tiles, False)
-       
-        #If there are tiles in that list
+
+        #Если в этом списке есть плитки
         if len(tileHitList) > 0:
-            #Move player to correct side of that tile, update player frame
+            #Переместить игрока на правильную сторону этой плитки, обновить кадр игрока
             for tile in tileHitList:
                 if self.changeY > 0:
                     self.rect.bottom = tile.rect.top
                     self.changeY = 1
-                    
+
                     if self.direction == "right":
                         self.image = self.stillRight
                     else:
@@ -154,128 +154,128 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.rect.top = tile.rect.bottom
                     self.changeY = 0
-        #If there are not tiles in that list
+        #Если в этом списке нет тайлов
         else:
-            #Update player change for jumping/falling and player frame
+            #Обновлена анимация игрока для прыжков/падений в кадре игрока
             self.changeY += 0.2
             if self.changeY > 0:
                 if self.direction == "right":
                     self.image = self.jumpingRight[1]
                 else:
                     self.image = self.jumpingLeft[1]
-        
-        #If player is on ground and running, update running animation
+
+        #Если игрок на земле и бежит, обновить анимацию бега
         if self.running and self.changeY == 1:
             if self.direction == "right":
                 self.image = self.runningRight[self.runningFrame]
             else:
                 self.image = self.runningLeft[self.runningFrame]
-        
-        #When correct amount of time has passed, go to next frame
+
+        #Когда правильное количество времени прошло, переходите к следующему кадру
         if pygame.time.get_ticks() - self.runningTime > 50:
             self.runningTime = pygame.time.get_ticks()
             if self.runningFrame == 4:
                 self.runningFrame = 0
             else:
                 self.runningFrame += 1
-    
-    #Make player jump
+
+    #Заставить игрока прыгнуть
     def jump(self):
-        #Check if player is on ground
+        #Проверьте, находится ли игрок на земле
         self.rect.y += 2
         tileHitList = pygame.sprite.spritecollide(self, self.currentLevel.layers[MAP_COLLISION_LAYER].tiles, False)
         self.rect.y -= 2
-        
+
         if len(tileHitList) > 0:
             if self.direction == "right":
                 self.image = self.jumpingRight[0]
             else:
                 self.image = self.jumpingLeft[0]
-                
+            #Высота прыжка
             self.changeY = -6
-    
-    #Move right
+
+    #Двигаться вправо
     def goRight(self):
         self.direction = "right"
         self.running = True
         self.changeX = 3
-    
-    #Move left
+
+    #Двигаться влево
     def goLeft(self):
         self.direction = "left"
         self.running = True
         self.changeX = -3
-    
-    #Stop moving
+
+    #Прекратить движение
     def stop(self):
         self.running = False
         self.changeX = 0
-    
-    #Draw player
+
+    #Отрисовка игрока
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        
+
 class Level(object):
     def __init__(self, fileName):
-        #Create map object from PyTMX
+        #Создать объект карты из PyTMX
         self.mapObject = pytmx.load_pygame(fileName)
-        
-        #Create list of layers for map
+
+        #Создать список слоев для карты
         self.layers = []
-        
-        #Amount of level shift left/right
+
+        #Число сдвига уровня влево/вправо
         self.levelShift = 0
-        
-        #Create layers for each layer in tile map
+
+        #Создайте слои для каждого слоя на карте тайлов
         for layer in range(len(self.mapObject.layers)):
             self.layers.append(Layer(index = layer, mapObject = self.mapObject))
-    
-    #Move layer left/right
+
+    #Переместить слой влево/вправо
     def shiftLevel(self, shiftX):
         self.levelShift += shiftX
-        
+
         for layer in self.layers:
             for tile in layer.tiles:
                 tile.rect.x += shiftX
-    
-    #Update layer
+
+    #Обновить слой
     def draw(self, screen):
         for layer in self.layers:
             layer.draw(screen)
-            
+
 class Layer(object):
     def __init__(self, index, mapObject):
-        #Layer index from tiled map
+        #Индекс слоя с тайловой карты
         self.index = index
-        
-        #Create gruop of tiles for this layer
+
+        #Создать группу плиток для этого слоя
         self.tiles = pygame.sprite.Group()
-        
-        #Reference map object
+
+        #Объект эталонной карты
         self.mapObject = mapObject
-        
-        #Create tiles in the right position for each layer
+
+        #Создайте плитки в правильном положении для каждого слоя
         for x in range(self.mapObject.width):
             for y in range(self.mapObject.height):
                 img = self.mapObject.get_tile_image(x, y, self.index)
                 if img:
                     self.tiles.add(Tile(image = img, x = (x * self.mapObject.tilewidth), y = (y * self.mapObject.tileheight)))
 
-    #Draw layer
+    #Отрисовать слой
     def draw(self, screen):
         self.tiles.draw(screen)
 
-#Tile class with an image, x and y
+#Плитка класс с изображением, х и у
 class Tile(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
-        
+
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-#Sprit sheet class to load sprites from player spritesheet
+#Класс листов спрайтов для загрузки спрайтов из листов спрайтов игроков
 class SpriteSheet(object):
     def __init__(self, fileName):
         self.sheet = pygame.image.load(fileName)
@@ -285,7 +285,7 @@ class SpriteSheet(object):
         image = pygame.Surface(rect.size, pygame.SRCALPHA, 32).convert_alpha()
         image.blit(self.sheet, (0, 0), rect)
         return image
-        
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -293,13 +293,13 @@ def main():
     clock = pygame.time.Clock()
     done = False
     game = Game()
-    
+
     while not done:
         done = game.processEvents()
         game.runLogic()
         game.draw(screen)
         clock.tick(60)
-        
+
     pygame.quit()
-    
+
 main()
