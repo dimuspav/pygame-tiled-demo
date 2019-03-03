@@ -1,4 +1,7 @@
 import pygame, pytmx
+import pyscroll
+import pyscroll.data
+from pyscroll.group import PyscrollGroup
 
 #Цвет Background
 BACKGROUND = (20, 20, 20)
@@ -8,6 +11,11 @@ SCREEN_HEIGHT = 480
 
 #Плиточный слой карты с плитками, с которыми вы сталкиваетесь
 MAP_COLLISION_LAYER = 1
+
+#Простая оболочка для изменения размера экрана
+def init_screen(width, height):
+    screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+    return screen
 
 class Game(object):
     def __init__(self):
@@ -21,7 +29,7 @@ class Game(object):
         self.player = Player(x = 200, y = 100)
         self.player.currentLevel = self.currentLevel
 
-        #Draw aesthetic overlay
+        #Отрисовка эстетического наложения - градиент размером с экран
         self.overlay = pygame.image.load("resources/overlay.png")
 
     def processEvents(self):
@@ -48,8 +56,12 @@ class Game(object):
         #Обновить логику движения и столкновения игрока
         self.player.update()
 
-    #Отрисовка уровня,игрока и наложения
+    ####################Отрисовка уровня, игрока и наложения
     def draw(self, screen):
+        #Центрируем карту/экран на нашем герое
+        #self.group.center(self.hero.rect.center)
+        #Отрисовка карты и спрайтов
+        #self.group.draw(screen)
         screen.fill(BACKGROUND)
         self.currentLevel.draw(screen)
         self.player.draw(screen)
@@ -220,6 +232,43 @@ class Level(object):
         #Создать объект карты из PyTMX
         self.mapObject = pytmx.load_pygame(fileName)
 
+        ##Настройка геометрии уровня с простыми pygame прямоугольниками, загруженными из pytmx
+        self.walls = list()
+        self.npcs = list()
+        self.stairs = list()
+        for map_object in self.mapObject.objects:
+            if map_object.type == "wall":
+                print("wall загрузка не удалась: переопределение wall")
+                #self.walls.append(Wall(map_object))
+            elif map_object.type == "stair":
+                print("stair загрузка не удалась: переопределение stair")
+                #self.stairs.append(Wall(map_object))
+            elif map_object.type == "guard":
+                print("npc загрузка не удалась: переопределение npc")
+                #self.npcs.append(Npc(map_object))
+            elif map_object.type == "hero":
+                print("hero загрузка не удалась: переопределение hero")
+                #self.hero = Hero(map_object)
+
+        ##Создать новый источник данных для pyscroll
+        map_data = pyscroll.data.TiledMapData(self.mapObject)
+
+        ##Создать новый рендер (камера)
+        screen = init_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.map_layer = pyscroll.BufferedRenderer(map_data, screen.get_size(), clamp_camera=True, tall_sprites=1)
+        self.map_layer.zoom = 2
+
+        ##pyscroll поддерживает многоуровневую визуализацию. наша карта имеет 3 нижних слоя
+        ##Слои начинаются с 0, поэтому это 0, 1 и 2.
+        ##Так как мы хотим, чтобы спрайт был на вершине слоя 1, мы устанавливаем значение по умолчанию
+        ##слой для спрайтов как 2
+        self.group = PyscrollGroup(map_layer=self.map_layer, default_layer=3)
+
+        ##Добавить нашего героя в группу объектов для рендеринга
+        ##self.group.add(self.hero)
+        ##for npc in self.npcs:
+        ##    self.group.add(npc)
+
         #Создать список слоев для карты
         self.layers = []
 
@@ -288,7 +337,7 @@ class SpriteSheet(object):
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+    screen = init_screen(SCREEN_WIDTH, SCREEN_HEIGHT)
     pygame.display.set_caption("Pygame Tiled Demo")
     clock = pygame.time.Clock()
     done = False

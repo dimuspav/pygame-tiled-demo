@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="150" height="20" tilewidth="24" tileheight="24" infinite="0" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" name="tiles" tilewidth="24" tileheight="24" spacing="1" tilecount="105" columns="15">
+  <image source="tiles.png" width="374" height="174"/>
+ </tileset>
+ <tileset firstgid="106" source="Layer_0008_3.tsx"/>
+ <layer id="3" name="background" width="150" height="20" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt2HfQD3QcB/AnHlqEZJdNe+9CstUTScmohLK3JKKMkJkZIaNsUtmrjJRR2avMsjPLKCu9+uN3V92Dc89z5+v6fe9e9/z13L2f9/tzz+/uly9pTEx+CvAYBXmcQhSmCEUpRnFKUJIneJI4nqIUpXmaMjxDWZ7lOcrxPOWpQEUq8QIv8hKVeZkq5IvmuqRzVaUar/Aq1alBTWpRmzrUpR71aUBDGtGYJrxGU16nGW/QnBa8SUta8RZv05o2tKUd79CeDnQMsKfIfqH2FVqud+lEZ7rQlW505z160JNe9KYPfXmffvTnAwYwkEF8yGCGMJRhfMTHDGcEIxnFaMYwlnGM55MAe4rsF2pfoeWawKd8xudMZBKTmcJUpjGdGcxkFrP5gi+Zw1zmMZ+vWMDXfMNCFrGYJXzLd3zPUpaxnBWsZFWAPUX2C7Wv0HKtZg1rWcd6fuBHNrCRTWxmC1v5iZ/ZxnZ2sJNd7GYPv7CXfeznAAc5xK/8xmGOcJRj/M4fHA+wp8h+idHXZTGJ31doO57gJKc4zZ+cISbW308SkhJLMpJzOVdwJVdxNSlIyTWkIjVpuJa0XEc60pOBjGQiM1m4nhvISrbY8HqK7JeQvv6+p/9KrL5C2zE7OchJLnKTh7zcyE3czC3cym3czh3cyV3czT3cy33czwM8yEM8zCM8Sj7yU4DHKMjjFKIwRSgaYE+R/RLSV3x3lVh9hbZjMYpTgpI8wZPE8RSlKM3TlOEZyvIsz1GO5ylPBSpSiRd4kZeozMtUoSrVeIVXqU4NalKL2tQJsKfIfgnpK767Sqy+QtuxLvWoTwMa0ojGNOE1mvI6zXiD5rTgTVrSird4m9a0oS3teIf2dKAj79KJznShK93oznv0oGeAPUX2S0hf8d1VYvUV2o696E0f+vI+/ejPBwxgIIP4kMEMYSjD+IiPGc4IRjKK0YxhLOMYzydM4FM+43MmMonJTGEq0wLsKbJfqH2Flms6M5jJLGbzBV8yh7nMYz5fsYCv+YaFLGIxS/iW7/iepSxjOStYySpWs4a1rGM9P/AjG9jIpgB7iuwXal+h5drMFrbyEz+zje3sYCe72M0efmEv+9jPAQ5yiF/5jcMc4SjH+J0/OM4JTnKK0/zJGWKS+VwgCUmThddTZL9Q+wotV2h5Qu0pmuvCcsWSjORczhVcyVVcTQpScg2pSE0ariUt15GO9GQgI5nITBau5wayko3s5CAnuchNHvJyIzdxc4A9RfaLvnO/uIsd4Dwv1HuPvnO/uH/8jApDqbO42LkuVEwAGaL+LXpXUWcT3/efEef73bP9z7pUbywqfNHbivq/+wtAR1kC
+  </data>
+ </layer>
+ <layer id="4" name="collision" width="150" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztlkEOgzAMBIP6sQqpPfYJ/f8zCgckVJXgFG+ycXakvUCQvTAHppTSpCiAiP+Zb/n7o36DiJ2YkFcCgbwSCOSVQCCvBAI2ryyzcmesu8orLGxeoYjYiRlmrxBzW3caBWavEETsxIi8EghG9ooltXeuAdMuR3jOb+0Qu1dPp3h199pnv9f3tYdDWjvE7tV9ycs529zcmV9474HO2vF98n6PsHiAxNrx7PkeqOWD16wrXrFR4lQynmHB2omFKF6V+LR/phfkVT+U+MeUHtj+kUZ0q7Uf0b36AKn5WX4=
+  </data>
+ </layer>
+</map>
